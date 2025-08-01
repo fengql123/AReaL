@@ -13,6 +13,7 @@ Usage:
 import argparse
 import asyncio
 import json
+from contextlib import asynccontextmanager
 import logging
 import os
 import signal
@@ -364,22 +365,22 @@ class RolloutWorkerServer:
 # Global server instance
 server_instance = None
 
-# FastAPI app
-app = FastAPI(title="Rollout Worker Server", version="1.0.0")
-
-@app.on_event("startup")
-async def startup_event():
-    """Initialize server on startup"""
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Handle startup and shutdown events"""
     global server_instance
+    # Startup
     if server_instance:
         await server_instance.initialize()
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown"""
-    global server_instance
+    
+    yield
+    
+    # Shutdown
     if server_instance:
         await server_instance.shutdown()
+
+# FastAPI app
+app = FastAPI(title="Rollout Worker Server", version="1.0.0", lifespan=lifespan)
 
 @app.get("/health")
 async def health_check():
