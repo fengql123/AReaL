@@ -1,0 +1,33 @@
+# Rollout Worker Server Configuration with Auto-Start SGLang
+
+# Auto-start SGLang servers (recommended for single-command setup)
+auto_start_sglang:
+  - model_path: "Qwen/Qwen2.5-7B-Instruct"
+    host: "127.0.0.1"
+    port: 30000
+    tp_size: 1
+    gpu_memory_utilization: 0.8
+    trust_remote_code: true
+    additional_args: 
+      - "--random-seed"
+      - "1"
+
+# Alternative: Use existing SGLang servers (comment out auto_start_sglang above)
+# sglang_servers:
+#   - "localhost:30000"
+#   - "localhost:30001"
+
+# Tokenizer path (required)
+tokenizer_path: "Qwen/Qwen2.5-7B-Instruct"
+
+# Model identifier
+model_name: "qwen2.5-7b"
+
+# Generation configuration
+generation_config:
+  temperature: 1.0
+  max_new_tokens: 2048
+  n_samples: 1
+  top_p: 0.9
+  top_k: 50
+  greedy: false
